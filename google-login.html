@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SkyLock Google Login Test</title>
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <h1>SkyLock Google Login</h1>
+
+  <!-- Kontener do automatycznego logowania -->
+  <div id="g_id_onload"
+       data-client_id="866410800248-rb3ifa3kpd5fidebutgarns21mi8fion.apps.googleusercontent.com"
+       data-login_uri="http://localhost:5172/api/auth/google"
+       data-auto_prompt="false">
+  </div>
+
+  <!-- Przycisk logowania Google -->
+  <div class="g_id_signin"
+       data-type="standard"
+       data-size="large"
+       data-theme="outline"
+       data-text="signin_with"
+       data-shape="rectangular"
+       data-logo_alignment="left">
+  </div>
+
+  <script>
+    // Funkcja obsługująca id_token od Google
+    function handleCredentialResponse(response) {
+      console.log("Google id_token:", response.credential);
+
+      // Wyślij id_token do SkyLock backend
+      fetch("http://localhost:5172/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: response.credential })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("SkyLock JWT:", data.token);
+        alert("Zalogowano! Sprawdź konsolę, masz SkyLock JWT.");
+      })
+      .catch(err => console.error("Błąd logowania:", err));
+    }
+
+    // Przypisz funkcję obsługi do globalnego okna
+    window.handleCredentialResponse = handleCredentialResponse;
+  </script>
+</body>
+</html>
