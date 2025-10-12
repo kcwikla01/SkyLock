@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Skylock.Database.DbContext;
 using Skylock.WEB.ApplicationServices.Base;
 
 namespace Skylock.WEB.Controllers
