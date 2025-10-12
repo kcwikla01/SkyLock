@@ -10,15 +10,9 @@ namespace Skylock.WEB.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
-        private readonly IConfiguration _config;
         private readonly IAuthApplicationService _authApplicationService;
-        private readonly SkylockDbContext _context;
-        private readonly IMapper _mapper;
-
-        public AuthController(IConfiguration config, SkylockDbContext context, IMapper mapper, IAuthApplicationService authApplicationService)
+        public AuthController(IAuthApplicationService authApplicationService)
         {
-            _config = config;
-            _context =context;
             _authApplicationService = authApplicationService;
         }
 

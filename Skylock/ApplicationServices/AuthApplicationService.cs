@@ -2,44 +2,42 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Skylock.Database.DbContext;
 using Skylock.Database.Models;
+using Skylock.UnitsOfWorks.Base;
 using Skylock.WEB.ApplicationServices.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http.Results;
+using Skylock.WEB.Extensions;
+using System.Text.Json;
 
 namespace Skylock.ApplicationServices
 {
     public class AuthApplicationService : IAuthApplicationService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly DbContext _context;
-        private readonly IMapper _mapper;
+        private readonly IManageUserUoW _manageUserUoW;
 
         public AuthApplicationService(
-            IHttpContextAccessor httpContextAccessor,
-            DbContext context,
-            IMapper mapper)
+            IHttpContextAccessor httpContextAccessor, IManageUserUoW manageUserUoW)
         {
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
-            _mapper = mapper;
+            _manageUserUoW = manageUserUoW;
         }
 
-        public Task<IActionResult> LoginOrRegister()
+        public async Task<IActionResult> LoginOrRegister()
         {
-            var userLoginDto = _httpContextAccessor.HttpContext.User;
+            var userLoginDto = ClaimsPrincipalExtensions.ToUserLoginDto(_httpContextAccessor.HttpContext.User);
 
-            User user = _mapper.Map<User>(userLoginDto);
+            var user = await _manageUserUoW.CheckIfUserExist(userLoginDto);
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            if (user != null)
+            {
+                return new OkObjectResult(user);
+            }
 
-            // You may want to return an appropriate IActionResult here
-            return Task.FromResult<IActionResult>(new OkResult());
+            user = await _manageUserUoW.CreateUser(userLoginDto);
+
+            string json = JsonSerializer.Serialize(user);
+            return new OkObjectResult(userLoginDto);
         }
     }
 }
