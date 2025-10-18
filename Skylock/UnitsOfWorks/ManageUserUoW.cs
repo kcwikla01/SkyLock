@@ -2,13 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Skylock.Database.DbContext;
 using Skylock.Database.Models;
+using Skylock.UnitsOfWorks.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Skylock.UnitsOfWorks.Base
+namespace Skylock.UnitsOfWorks
 {
     public class ManageUserUoW : IManageUserUoW
     {

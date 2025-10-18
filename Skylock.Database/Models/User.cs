@@ -13,5 +13,7 @@ namespace Skylock.Database.Models
         public string KeycloakId { get; set; }
         public string Email { get; set; }
         public string UserName { get; set; }
+
+        public ICollection<File> Files { get; set; } = new List<File>();
     }
 }

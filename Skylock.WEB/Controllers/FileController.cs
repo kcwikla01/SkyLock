@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Skylock.ApplicationServices.Base;
 
 namespace Skylock.WEB.Controllers
 {
@@ -7,19 +8,27 @@ namespace Skylock.WEB.Controllers
     [Route("api/File")]
     public class FileController : Controller
     {
+        private readonly IFileApplicationService _fileApplicationService;
+        public FileController(IFileApplicationService fileApplicationService)
+        {
+            _fileApplicationService = fileApplicationService;
+        }
 
         [Authorize]
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile()
+        public async Task<IActionResult> UploadFile(IFormFile file)
         {
-            return Ok();
+            if (file == null || file.Length == 0)
+                return BadRequest("File is empty.");
+
+            return await _fileApplicationService.UploadFile(file);
         }
 
         [Authorize]
         [HttpGet("download/{fileId}")]
         public async Task<IActionResult> DownloadFile(string fileId)
         {
-            return Ok();
+            return await _fileApplicationService.DownloadFile(fileId);
         }
 
         [Authorize]
@@ -33,7 +42,7 @@ namespace Skylock.WEB.Controllers
         [HttpGet("GetFiles")]
         public async Task<IActionResult> GetFiles()
         {
-            return Ok();
+            return await _fileApplicationService.GetFiles();
         }
 
         [Authorize]
@@ -43,7 +52,7 @@ namespace Skylock.WEB.Controllers
             return Ok();
         }
 
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpGet("GetAllFiles")]
         public async Task<IActionResult> GetAllFiles()
         {

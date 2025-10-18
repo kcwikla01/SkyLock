@@ -1,5 +1,6 @@
 ﻿
 using Autofac;
+using Skylock.Aggregate.Base;
 using Skylock.UnitsOfWorks.Base;
 using Skylock.WEB.ApplicationServices.Base;
 namespace Skylock.Autofac
@@ -16,11 +17,24 @@ namespace Skylock.Autofac
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
 
-            builder.RegisterAssemblyTypes(typeof(IApplicationService).Assembly)
+            builder.RegisterAssemblyTypes(typeof(IUnitOfWork).Assembly)
             .Where(t => t.GetInterfaces().Any(i =>
                 typeof(IUnitOfWork).IsAssignableFrom(i) && i != typeof(IApplicationService)))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(typeof(IAggregate).Assembly)
+            .Where(t => t.GetInterfaces().Any(i =>
+                typeof(IAggregate).IsAssignableFrom(i) && i != typeof(IApplicationService)))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+
+            builder.RegisterAssemblyTypes(typeof(IAggregateFactory).Assembly)
+            .Where(t => t.GetInterfaces().Any(i =>
+                typeof(IAggregateFactory).IsAssignableFrom(i) && i != typeof(IApplicationService)))
+            .AsImplementedInterfaces()
+            .InstancePerLifetimeScope();
+
         }
     }
 }

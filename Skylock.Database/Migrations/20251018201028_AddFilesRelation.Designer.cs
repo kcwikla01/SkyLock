@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skylock.Database.DbContext;
 
@@ -11,9 +12,11 @@ using Skylock.Database.DbContext;
 namespace Skylock.Database.Migrations
 {
     [DbContext(typeof(SkylockDbContext))]
-    partial class SkylockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251018201028_AddFilesRelation")]
+    partial class AddFilesRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace Skylock.Database.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.ToTable("Files");
+                    b.ToTable("File");
                 });
 
             modelBuilder.Entity("Skylock.Database.Models.User", b =>
