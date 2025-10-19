@@ -21,13 +21,6 @@ namespace Skylock.WEB.Controllers
             return await _authApplicationService.LoginOrRegister();
         }
 
-        [Authorize]
-        [HttpGet]
-        public IActionResult test()
-        {
-            return Ok();
-        }
-
         [Authorize(Roles = "admin")]
         [HttpGet("testAdmin")]
         public IActionResult testAdmin()

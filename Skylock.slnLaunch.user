@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Skylock.WEB\\Skylock.WEB.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Skylock.Frontent\\skylock.frontent.esproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

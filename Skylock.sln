@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylock.Database", "Skylock
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skylock", "Skylock\Skylock.csproj", "{A1E1C6AE-C6CF-44DD-A7C1-62F0F1AB9E58}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "skylock.frontent", "Skylock.Frontent\skylock.frontent.esproj", "{6ECA58D8-368E-5B44-B89E-F596C51A1B16}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,12 @@ Global
 		{A1E1C6AE-C6CF-44DD-A7C1-62F0F1AB9E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1E1C6AE-C6CF-44DD-A7C1-62F0F1AB9E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1E1C6AE-C6CF-44DD-A7C1-62F0F1AB9E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ECA58D8-368E-5B44-B89E-F596C51A1B16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ECA58D8-368E-5B44-B89E-F596C51A1B16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ECA58D8-368E-5B44-B89E-F596C51A1B16}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{6ECA58D8-368E-5B44-B89E-F596C51A1B16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ECA58D8-368E-5B44-B89E-F596C51A1B16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ECA58D8-368E-5B44-B89E-F596C51A1B16}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

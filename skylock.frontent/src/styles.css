@@ -1,0 +1,217 @@
+:root {
+    color-scheme: light dark;
+    --bg: #0b1020;
+    --bg-card: #121831;
+    --bg-tile: #1a2245; /* lighter than card */
+    --bg-tile-hover: #212a55;
+    --border: #1f2746;
+    --text: #e7e9ee;
+    --muted: #9aa4c0;
+    --accent: #3b82f6;
+    --danger: #e24a4a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100dvh;
+    background: linear-gradient(135deg, #0e1329 0%, #0a0f20 60%, #070a15 100%);
+    color: var(--text);
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial;
+}
+
+.page {
+    max-width: 960px;
+    margin: 32px auto;
+    padding: 0 16px;
+}
+
+.header {
+    margin-bottom: 16px;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin: 4px 0 0;
+}
+
+.content {
+    display: grid;
+    gap: 16px;
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 12px 28px rgba(0,0,0,.25);
+}
+
+/* Base buttons (login, etc.) */
+button {
+    padding: 8px 12px;
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+    button:hover {
+        filter: brightness(1.05);
+    }
+
+    button[disabled] {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+.hint {
+    color: var(--muted);
+}
+
+/* Top-right big greeting */
+.top-greeting {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+}
+
+    .top-greeting .hello {
+        font-weight: 800;
+        letter-spacing: .2px;
+        font-size: clamp(18px, 2.4vw, 28px);
+    }
+
+    .top-greeting .nick {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+/* Upload header row: title centered, actions right */
+.card-header-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+    .card-header-row h2 {
+        margin: 0;
+        justify-self: center;
+    }
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Tiles grid for files */
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+/* Tile layout vertical: name on top, icons below */
+.tile {
+    background: var(--bg-tile);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.22);
+    transition: transform .12s ease, background .2s ease;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+    .tile:hover {
+        transform: translateY(-2px);
+        background: var(--bg-tile-hover);
+    }
+
+    .tile .name {
+        color: #fff;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Icon buttons row */
+    .tile .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+/* Icon-only button styling */
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+}
+
+    .icon-btn i {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .icon-btn:hover {
+        background: #ffffff0d;
+    }
+
+    .icon-btn.danger {
+        color: var(--danger);
+        border-color: #e24a4a55;
+    }
+
+        .icon-btn.danger:hover {
+            background: #e24a4a22;
+        }
+
+/* Small screens */
+@media (max-width: 420px) {
+    .page {
+        margin: 20px auto;
+    }
+
+    .tile {
+        min-height: 100px;
+    }
+
+    .top-greeting {
+        left: 16px;
+        right: 16px;
+        justify-content: space-between;
+    }
+}
+
+h2 {
+    color: #fff
+}
