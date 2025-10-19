@@ -131,5 +131,26 @@ namespace Skylock.Aggregate
                 throw;
             }
         }
+
+        public override bool DeleteFile(FileDTO fileInfo, User user)
+        {
+            var filePath = Path.Combine(StoragePath, user.KeycloakId, fileInfo.FileId);
+
+            if (!System.IO.File.Exists(filePath))
+                throw new FileNotFoundException("Encrypted file not found.", filePath);
+
+            if (string.IsNullOrWhiteSpace(StoragePath))
+                throw new InvalidOperationException("LocalStorage:BasePath is not configured.");
+
+            try
+            {
+                System.IO.File.Delete(filePath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

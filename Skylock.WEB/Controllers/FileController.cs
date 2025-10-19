@@ -35,7 +35,7 @@ namespace Skylock.WEB.Controllers
         [HttpDelete("delete/{fileId}")]
         public async Task<IActionResult> DeleteFile(string fileId)
         {
-            return Ok();
+            return await _fileApplicationService.DeleteFile(fileId);
         }
 
         [Authorize]

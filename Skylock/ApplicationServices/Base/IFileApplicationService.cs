@@ -11,6 +11,7 @@ namespace Skylock.ApplicationServices.Base
 {
     public interface IFileApplicationService : IApplicationService
     {
+        Task<IActionResult> DeleteFile(string fileId);
         Task<IActionResult> DownloadFile(string fileId);
         Task<IActionResult> GetFiles();
         Task<IActionResult> UploadFile(IFormFile file);

@@ -12,5 +12,6 @@ namespace Skylock.Aggregate.Base
     {
         public abstract string SaveFile(IFormFile file, string targetFileName, User user);
         public abstract Stream DownloadFile(FileDTO fileInfo, User user);
+        public abstract bool DeleteFile(FileDTO fileInfo, User user);
     }
 }

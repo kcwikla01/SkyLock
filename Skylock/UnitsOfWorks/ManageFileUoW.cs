@@ -38,6 +38,22 @@ namespace Skylock.UnitsOfWorks
             return file;
         }
 
+        public async Task<bool> DeleteFileDb(FileDTO fileInfo)
+        {
+            var file = await _dbContext.Files.FirstOrDefaultAsync(file => file.FileName.Equals(fileInfo.FileId));
+
+            try
+            {
+                _dbContext.Remove(file);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         public async Task<FileDTO?> GetFileInfo(string fileId)
         {
            var file =  await _dbContext.Files.FirstOrDefaultAsync(file => file.FileName == fileId);

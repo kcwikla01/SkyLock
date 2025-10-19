@@ -35,6 +35,36 @@ namespace Skylock.ApplicationServices
             _manageFileUoW = manageFileUoW;
         }
 
+        public async Task<IActionResult> DeleteFile(string fileId)
+        {
+            var userLoginDto = ClaimsPrincipalExtensions.ToUserLoginDto(_httpContextAccessor.HttpContext.User);
+            var user = await _manageUserUoW.CheckIfUserExist(userLoginDto);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("File not exist");
+            }
+
+            var fileInfo = await _manageFileUoW.GetFileInfo(fileId);
+
+            if (fileInfo == null)
+            {
+                return new NotFoundObjectResult("File not exist");
+            }
+            var storageAggregate = StorageAggregateFactory.CreateStorageAggregate(fileInfo.StorageType, _configuration);
+            if(storageAggregate == null)
+            {
+                return new BadRequestObjectResult("Wrong fileStorageType");
+            }
+            var responseStorage = storageAggregate.DeleteFile(fileInfo, user);
+            var responseDatabase = await _manageFileUoW.DeleteFileDb(fileInfo);
+
+            if(responseStorage && responseDatabase)
+            {
+                return new OkObjectResult("File is deleted");
+            }
+            return new BadRequestObjectResult("File is not deleted");
+        }
+
         public async Task<IActionResult> DownloadFile(string fileId)
         {
             var userLoginDto = ClaimsPrincipalExtensions.ToUserLoginDto(_httpContextAccessor.HttpContext.User);
