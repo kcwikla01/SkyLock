@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Skylock.Aggregate;
@@ -109,7 +109,7 @@ namespace Skylock.ApplicationServices
             return new OkObjectResult(fileList);
         }
 
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, string path)
         {
             if (file == null || file.Length == 0)
                 return new BadRequestObjectResult("File is empty.");
@@ -123,7 +123,7 @@ namespace Skylock.ApplicationServices
             var fileName = Guid.NewGuid().ToString();
             var storagePath = storageAggregate.SaveFile(file, fileName, user);
 
-            var addedFile = await _manageFileUoW.AddFileToDB(userLoginDto.KeycloakId, file.FileName, fileName, StorageAggregateType);
+            var addedFile = await _manageFileUoW.AddFileToDB(userLoginDto.KeycloakId, file.FileName, fileName, StorageAggregateType, path );
 
             return new OkObjectResult(new { Message = $"File uploaded successfully - {addedFile.Id}" });
         }

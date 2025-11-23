@@ -26,16 +26,32 @@ export async function getFiles(token: string): Promise<FileDto[]> {
 
 // Upload encrypted blob (blob already contains IV as prefix; backend just stores file)
 // filename is optional; pass original name if you want backend to store it
-export async function uploadEncryptedFilePrefixed(token: string, encryptedBlob: Blob, filename?: string) {
+export async function uploadEncryptedFilePrefixed(token: string, encryptedBlob: Blob, filename?: string, path?: string) {
     const form = new FormData()
     form.append('file', encryptedBlob, filename || 'file.enc')
     if (filename) form.append('originalFilename', filename)
+    form.append('path', path ?? '') // zawsze dołączamy path ('' = root)
+
+    // debug: pokaż zawartość FormData
+    for (const entry of form.entries()) {
+        console.log('[upload] form entry:', entry[0], entry[1])
+    }
+
     const res = await fetch('/api/File/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: form,
         credentials: 'include',
     })
+
+    const text = await res.text().catch(() => '')
+    console.log('[upload] response status:', res.status, 'body:', text)
+
+    // zwracaj odpowiedź lub wyrzuć, żeby App mogło ją obsłużyć
+    if (!res.ok) {
+        throw new Error(`Upload failed ${res.status} ${text}`)
+    }
+    // jeśli chcesz oryginalny Response obiektem, trzeba by parsować JSON z text
     return res
 }
 

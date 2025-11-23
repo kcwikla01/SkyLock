@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Skylock.WEB.ApplicationServices.Base;
 using System;
@@ -14,6 +14,6 @@ namespace Skylock.ApplicationServices.Base
         Task<IActionResult> DeleteFile(string fileId);
         Task<IActionResult> DownloadFile(string fileId);
         Task<IActionResult> GetFiles();
-        Task<IActionResult> UploadFile(IFormFile file);
+        Task<IActionResult> UploadFile(IFormFile file, string path);
     }
 }

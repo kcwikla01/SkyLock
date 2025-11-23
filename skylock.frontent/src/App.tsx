@@ -25,22 +25,55 @@ export default function App() {
     const [busyId, setBusyId] = useState<string | null>(null)
     const [busyUpload, setBusyUpload] = useState(false)
 
+    // currentPath defaultowo na ""
+    const [currentPath, setCurrentPath] = useState<string>('')
+
     useEffect(() => {
         if (authenticated) void fetchFiles()
         else setFiles([])
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authenticated])
+    }, [authenticated, currentPath])
 
     async function fetchFiles() {
         const token = await getToken()
         if (!token) return
         try {
-            const data = await api.getFiles(token)
-            setFiles(data)
+            // najpierw poproś backend o pliki w currentPath (jeśli backend obsługuje param path)
+            let data: FileDto[] = []
+            try {
+                data = await api.getFiles(token, currentPath)
+            } catch (err) {
+                // jeśli backend nie wspiera path albo zwraca błąd, spróbuj pobrać wszystko i przefiltrować lokalnie
+                console.warn('getFiles(path) failed, trying getFiles() and client-side filter', err)
+                try {
+                    const all = await api.getFiles(token) // fallback bez path
+                    data = all
+                } catch (err2) {
+                    throw err2
+                }
+            }
+
+            // klient-side filtr jako safety: trzymaj tylko elementy z dokładnie tą ścieżką
+            const normalizedCurrent = (currentPath || '').replace(/^\/+|\/+$/g, '')
+            const filtered = data.filter((f) => ((f.path || '').replace(/^\/+|\/+$/g, '') === normalizedCurrent))
+            setFiles(filtered)
         } catch (e) {
             console.warn('GetFiles failed', e)
             setFiles([])
         }
+    }
+
+    // Tymczasowa implementacja createFolderPrompt: pyta o nazwę, sanityzuje i ustawia currentPath
+    async function createFolderPrompt() {
+        const name = prompt('Nazwa nowego katalogu (w bieżącym katalogu):')
+        if (!name) return
+        const safe = name.replace(/[/\\]+/g, '').trim()
+        if (!safe) return
+        const newPath = currentPath ? `${currentPath}/${safe}` : safe
+        // ustawiamy ścieżkę lokalnie (na razie nie wywołujemy backendu)
+        setCurrentPath(newPath)
+        setStatus?.(`Przejście do katalogu: ${newPath}`)
+        try { await fetchFiles() } catch { }
     }
 
     async function handleDownload(f: FileDto) {
@@ -105,7 +138,8 @@ export default function App() {
             // encrypt and upload
             const encRes = await encryptFilePrefixedIV(file, sub)
             const encryptedBlob = encRes.blob
-            const res = await api.uploadEncryptedFilePrefixed(t, encryptedBlob, file.name)
+            // send currentPath as path metadata
+            const res = await api.uploadEncryptedFilePrefixed(t, encryptedBlob, file.name, currentPath)
             if (res.ok) {
                 setStatus('Plik przesłany (zaszyfrowany)')
                 await fetchFiles()
@@ -150,6 +184,8 @@ export default function App() {
                             onDownload={handleDownload}
                             onDelete={handleDelete}
                             onUpload={handleUpload}
+                            onNavigate={(path: string) => setCurrentPath(path)}
+                            onCreateFolder={createFolderPrompt}
                         />
 
                         {status && (

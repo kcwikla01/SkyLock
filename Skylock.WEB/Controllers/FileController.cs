@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Skylock.ApplicationServices.Base;
 
@@ -16,12 +16,12 @@ namespace Skylock.WEB.Controllers
 
         [Authorize]
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, string path)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("File is empty.");
 
-            return await _fileApplicationService.UploadFile(file);
+            return await _fileApplicationService.UploadFile(file, path);
         }
 
         [Authorize]

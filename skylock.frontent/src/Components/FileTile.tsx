@@ -35,6 +35,7 @@ export default function FileTile({ file, name, id, isBusy, onDownload, onDelete 
                 >
                     <i className="bi bi-trash"></i>
                 </button>
+
             </div>
         </div>
     )

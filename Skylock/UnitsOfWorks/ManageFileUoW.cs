@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Skylock.Database.DbContext;
@@ -21,7 +21,7 @@ namespace Skylock.UnitsOfWorks
             _dbContext = dbContext;
             _mapper = mapper;
         }
-        public async Task<Skylock.Database.Models.File> AddFileToDB(string keycloakId, string originalFilename, string localFileName, string storageAggregateType)
+        public async Task<Skylock.Database.Models.File> AddFileToDB(string keycloakId, string originalFilename, string localFileName, string storageAggregateType, string filePath)
         {
             Skylock.Database.Models.File file = new Skylock.Database.Models.File
             {
@@ -29,7 +29,8 @@ namespace Skylock.UnitsOfWorks
                 OriginalFileName = originalFilename,
                 FileName = localFileName,
                 StorageType = storageAggregateType,
-                UploadedAt = DateTime.UtcNow
+                UploadedAt = DateTime.UtcNow,
+                
             };
 
             await _dbContext.AddAsync(file);
