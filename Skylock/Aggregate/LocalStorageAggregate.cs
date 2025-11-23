@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Skylock.Aggregate.Base;
 using Skylock.Database.Models;
@@ -61,26 +61,12 @@ namespace Skylock.Aggregate
 
             Directory.CreateDirectory(userDirectoryPath);
 
-            var filePath = Path.Combine(StoragePath,user.KeycloakId, targetFileName);
+            var filePath = Path.Combine(StoragePath, user.KeycloakId, targetFileName);
 
             using var input = file.OpenReadStream();
             using var output = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 64 * 1024);
 
-            using var aes = Aes.Create();
-            aes.Key = _aesKey;
-            aes.Mode = CipherMode.CBC;
-            aes.Padding = PaddingMode.PKCS7;
-            aes.GenerateIV(); // losowy IV per plik
-
-            // Prefix: IV (16 bajtów)
-            output.Write(aes.IV, 0, aes.IV.Length);
-
-            using var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-            using var crypto = new CryptoStream(output, encryptor, CryptoStreamMode.Write);
-
-            // Strumieniowo szyfrujemy zawartość
-            input.CopyTo(crypto);
-            crypto.FlushFinalBlock();
+            input.CopyTo(output);
 
             return filePath;
         }
@@ -100,36 +86,7 @@ namespace Skylock.Aggregate
                 bufferSize: 64 * 1024,
                 options: FileOptions.SequentialScan);
 
-            try
-            {
-                // Odczytaj IV (16 bajtów) z początku pliku
-                var iv = new byte[16];
-                int read = fs.Read(iv, 0, iv.Length);
-                if (read != iv.Length)
-                {
-                    fs.Dispose();
-                    throw new InvalidDataException("Invalid encrypted file header (IV).");
-                }
-
-                // Utwórz strumień deszyfrujący (READ)
-                var aes = Aes.Create();
-                aes.Key = _aesKey;
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-
-                var decryptor = aes.CreateDecryptor(aes.Key, iv);
-
-                // CryptoStream zwrócony do kontrolera; jego Dispose zamknie także FileStream i decryptor
-                var cryptoStream = new CryptoStream(fs, decryptor, CryptoStreamMode.Read);
-
-                return cryptoStream;
-            }
-            catch
-            {
-                // W razie błędu domknij FileStream
-                fs.Dispose();
-                throw;
-            }
+            return fs;
         }
 
         public override bool DeleteFile(FileDTO fileInfo, User user)

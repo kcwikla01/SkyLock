@@ -10,5 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\Auth\" />
+    <Folder Include="src\Components\" />
+    <Folder Include="src\NewFolder\" />
+    <Folder Include="src\Services\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Skylock.Aggregate.Base;
 using Skylock.UnitsOfWorks.Base;
 using System;
@@ -14,7 +14,9 @@ namespace Skylock.Aggregate
        
         public static StorageAggregate? CreateStorageAggregate(string StorageAggregateType, IConfiguration configuration)
         {
-            return LocalStorageAggregate.CreateOrDefault(StorageAggregateType, configuration);
+            return (StorageAggregate?)(LocalStorageAggregate.CreateOrDefault(StorageAggregateType, configuration) ??
+                   AmazonStorageAggregate.CreateOrDefault(StorageAggregateType, configuration) ??
+                   AzureStorageAggregate.CreateOrDefault(StorageAggregateType, configuration));
         }
     }
 }
