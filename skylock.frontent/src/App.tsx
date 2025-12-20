@@ -5,7 +5,7 @@ import { getId, getName, FileDto } from './types'
 import * as api from './services/api'
 import Header from './components/Header'
 import FileList from './components/FileList'
-import { encryptFilePrefixedIV, decryptPrefixedIVBlobToArrayBuffer } from './utils/crypto'
+import { encryptFilePrefixedIV, decryptPrefixedIVBlobToArrayBuffer } from './utils/cryptoUtils'
 
 export default function App() {
     const {

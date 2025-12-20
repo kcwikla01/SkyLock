@@ -215,3 +215,60 @@ button {
 h2 {
     color: #fff
 }
+
+.tile {
+    width: 100%; /* Pozwól gridowi decydować o szerokości (minmax 220px) */
+    background: var(--bg-tile);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,.22);
+    transition: transform .12s ease, background .2s ease;
+}
+
+    .tile:hover {
+        transform: translateY(-2px);
+        background: var(--bg-tile-hover);
+    }
+
+/* Kontener na podgląd dopasowany do ciemnego motywu */
+.preview-container {
+    width: 100%;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2); /* Delikatne przyciemnienie zamiast białego */
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.img-fit {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9; /* Lekko przyciemnione, by lepiej pasowało do dark mode */
+}
+
+/* Ikony w kolorze muted */
+.icon-wrapper i {
+    font-size: 3rem;
+    color: var(--muted);
+}
+
+.file-name {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
