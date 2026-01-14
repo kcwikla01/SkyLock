@@ -34,10 +34,9 @@ namespace Skylock.ApplicationServices
 
         public async Task<IActionResult> CreateFolder(string? folderPath)
         {
-            //var userLoginDto = ClaimsPrincipalExtensions.ToUserLoginDto(_httpContextAccessor.HttpContext.User);
-            //var user = await _manageUserUoW.CheckIfUserExist(userLoginDto);
-            //var keycloakId = user.KeycloakId;
-            var keycloakId = "d2780b43-2190-471f-ab31-d1581e9c56c1";
+            var userLoginDto = ClaimsPrincipalExtensions.ToUserLoginDto(_httpContextAccessor.HttpContext.User);
+            var user = await _manageUserUoW.CheckIfUserExist(userLoginDto);
+            var keycloakId = user.KeycloakId;
 
             if (string.IsNullOrEmpty(folderPath))
                 folderPath = string.Empty;
