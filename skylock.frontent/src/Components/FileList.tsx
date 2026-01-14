@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { FileDto, getId, getName } from '../types'
 import FileTile from '../Components/FileTile'
+import FolderTile from '../Components/FolderTile'
 import { decryptPrefixedIVBlobToArrayBuffer, createThumbnail } from '../utils/cryptoUtils'
 
 type Props = {
@@ -12,9 +13,14 @@ type Props = {
     onDownload: (f: FileDto) => void;
     onDelete: (f: FileDto) => void;
     onUpload: (file: File) => void;
+    directories: string[];
+    currentPath: string;
+    onFolderClick: (name: string) => void;
+    onBack: () => void;
+    onCreateFolder: () => void;
 };
 
-export default function FileList({ files, busyId, busyUpload, sub, onDownload, onDelete, onUpload }: Props) {
+export default function FileList({ files, busyId, busyUpload, sub, onDownload, onDelete, onUpload, directories = [], currentPath = "\\", onFolderClick, onBack, onCreateFolder }: Props) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [thumbnails, setThumbnails] = useState<Record<string, string>>({});
 
@@ -52,6 +58,20 @@ export default function FileList({ files, busyId, busyUpload, sub, onDownload, o
             <div className="card-header-row">
                 <h2>Twoje pliki</h2>
                 <div className="card-actions">
+                    <button
+                        className="btn btn-primary btn-sm"
+                        title="StworzFolder"
+                        onClick={onCreateFolder}
+                    >
+                        <i className="bi bi-folder-plus"></i> {/* To jest ikonka Folderu */}
+                    </button>
+                    <button
+                        className="btn btn-primary btn-sm"
+                        title="Wróć wyżej"
+                        onClick={onBack}
+                    >
+                        <i className="bi bi-arrow-left"></i> {/* To jest ikonka strzałki */}
+                    </button>
                     <button className="btn btn-primary btn-sm" onClick={() => fileInputRef.current?.click()} disabled={busyUpload}>
                         {busyUpload ? 'Wysyłanie…' : 'Upload'}
                     </button>
@@ -64,10 +84,32 @@ export default function FileList({ files, busyId, busyUpload, sub, onDownload, o
             </div>
 
             <div className="tiles">
+                <div style={{
+                    gridColumn: '1 / -1', // Rozciąga napis na całą szerokość grida
+                    textAlign: 'center',
+                    padding: '10px 0',
+                    marginBottom: '10px',
+                    fontSize: '1.2rem',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                    <strong style={{ color: '#888' }}>Ścieżka:</strong>
+                    <span style={{ color: '#ffc107', marginLeft: '10px' }}>
+                        {currentPath === "" ? "/" : `/${currentPath}`}
+                    </span>
+                </div>
+
+                {directories.map((dirName, i) => (
+                    <FolderTile
+                        key={`folder-${i}`}
+                        name={dirName}
+                        onClick={onFolderClick} // Przekazujemy funkcję do kafelka
+                    />
+                ))}
+
                 {files.map((f, i) => {
                     const id = getId(f) ?? String(i);
                     const name = getName(f);
-                    return (
+                        return (
                         <FileTile
                             key={id}
                             file={f}
@@ -78,7 +120,7 @@ export default function FileList({ files, busyId, busyUpload, sub, onDownload, o
                             onDownload={onDownload}
                             onDelete={onDelete}
                         />
-                    );
+                        );
                 })}
             </div>
         </section>

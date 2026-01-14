@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,8 @@ namespace Skylock.Database.Models
         public string FileId { get; set; }
         public string OriginalFileName { get; set; }
         public string StorageType { get; set; }
+
+        public string? FilePath { get; set; }
         public DateTimeOffset UploadedAt { get; set; } = DateTimeOffset.UtcNow;
     }
 }

@@ -49,21 +49,23 @@ namespace Skylock.Aggregate
             return null;
         }
 
-        public override string SaveFile(IFormFile file, string targetFileName, User user)
+        public override string SaveFile(IFormFile file, string targetFileName, User user, string? FilePath)
         {
             if (file == null) throw new ArgumentNullException(nameof(file));
             if (file.Length == 0) throw new ArgumentException("File is empty.", nameof(file));
             if (string.IsNullOrWhiteSpace(StoragePath))
                 throw new InvalidOperationException("LocalStorage:BasePath is not configured.");
 
-            Directory.CreateDirectory(StoragePath);
-            var userDirectoryPath = Path.Combine(StoragePath, user.KeycloakId);
+            string subFolder = FilePath ?? string.Empty;
+
+            var userDirectoryPath = Path.Combine(StoragePath, user.KeycloakId, subFolder);
 
             Directory.CreateDirectory(userDirectoryPath);
 
-            var filePath = Path.Combine(StoragePath, user.KeycloakId, targetFileName);
+            var filePath = Path.Combine(userDirectoryPath, targetFileName);
 
             using var input = file.OpenReadStream();
+
             using var output = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 64 * 1024);
 
             input.CopyTo(output);
@@ -73,7 +75,7 @@ namespace Skylock.Aggregate
 
         public override Stream DownloadFile(FileDTO fileInfo, User user)
         {
-            var filePath = Path.Combine(StoragePath, user.KeycloakId, fileInfo.FileId);
+            var filePath = fileInfo.FilePath;
 
             if (!System.IO.File.Exists(filePath))
                 throw new FileNotFoundException("Encrypted file not found.", filePath);
@@ -91,7 +93,7 @@ namespace Skylock.Aggregate
 
         public override bool DeleteFile(FileDTO fileInfo, User user)
         {
-            var filePath = Path.Combine(StoragePath, user.KeycloakId, fileInfo.FileId);
+            var filePath = fileInfo.FilePath;
 
             if (!System.IO.File.Exists(filePath))
                 throw new FileNotFoundException("Encrypted file not found.", filePath);

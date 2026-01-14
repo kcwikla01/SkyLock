@@ -25,17 +25,48 @@ export default function App() {
     const [busyId, setBusyId] = useState<string | null>(null)
     const [busyUpload, setBusyUpload] = useState(false)
 
-    useEffect(() => {
-        if (authenticated) void fetchFiles()
-        else setFiles([])
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [authenticated])
+    const [directories, setDirectories] = useState<string[]>([]);
+    const [currentPath, setCurrentPath] = useState<string>("");
 
-    async function fetchFiles() {
+    const handleFolderClick = (folderName: string) => {
+        const nextPath = currentPath === "" ? folderName : `${currentPath}\\${folderName}`;
+        setCurrentPath(nextPath);
+        fetchFiles(next)
+    };
+
+    const handleBack = () => {
+        if (currentPath === "") return;
+
+        const parts = currentPath.split('\\');
+        parts.pop();
+        const parentPath = parts.join('\\');
+
+        setCurrentPath(parentPath);
+    };
+
+    useEffect(() => {
+        if (authenticated) void fetchFilesAndDirectory()
+        else {
+            setFiles([])
+            setDirectories([])
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [authenticated, currentPath])
+
+    async function fetchFiles(nextPath: string) {
+        const token = await getToken()
+        if (!token) return
+        const data = await api.getFiles(token, nextPath)
+        setFiles(data)
+    }
+
+    async function fetchFilesAndDirectory() {
         const token = await getToken()
         if (!token) return
         try {
-            const data = await api.getFiles(token)
+            const data = await api.getFiles(token, currentPath)
+            const dirs = await api.getDirectories(token, currentPath);
+            setDirectories(dirs);
             setFiles(data)
         } catch (e) {
             console.warn('GetFiles failed', e)
@@ -93,6 +124,21 @@ export default function App() {
         }
     }
 
+    async function handleCreateFolder() {
+        const t = await getToken()
+        if (!t) { setStatus('Brak tokenu'); return }
+        const name = prompt("Podaj nazwę nowego folderu:");
+        if (!name || name.trim() === "") return;
+
+        const fullPathForApi = currentPath === ""
+            ? name.trim()
+            : `${currentPath}\\${name.trim()}`;
+
+        await api.createDirectory(t, fullPathForApi);
+        const dirs = await api.getDirectories(t, currentPath);
+        setDirectories(dirs);
+    }
+
     async function handleUpload(file: File) {
         setBusyUpload(true)
         try {
@@ -105,10 +151,10 @@ export default function App() {
             // encrypt and upload
             const encRes = await encryptFilePrefixedIV(file, sub)
             const encryptedBlob = encRes.blob
-            const res = await api.uploadEncryptedFilePrefixed(t, encryptedBlob, file.name)
+            const res = await api.uploadEncryptedFilePrefixed(t, encryptedBlob, file.name, currentPath)
             if (res.ok) {
                 setStatus('Plik przesłany (zaszyfrowany)')
-                await fetchFiles()
+                await fetchFiles(currentPath)
             } else {
                 const body = await res.text().catch(() => '')
                 setStatus(`Upload nie powiódł się: ${res.status} ${body}`)
@@ -142,14 +188,19 @@ export default function App() {
                         <button onClick={login}>Zaloguj</button>
                     </section>
                 ) : (
-                    <>
+                        <>
                         <FileList
-                            files={files}
-                            busyId={busyId}
-                            busyUpload={busyUpload}
-                            onDownload={handleDownload}
-                            onDelete={handleDelete}
-                            onUpload={handleUpload}
+                                files={files}
+                                busyId={busyId}
+                                busyUpload={busyUpload}
+                                onDownload={handleDownload}
+                                onDelete={handleDelete}
+                                onUpload={handleUpload}
+                                directories={directories || []}
+                                currentPath={currentPath}
+                                onFolderClick={handleFolderClick}
+                                onBack={handleBack}
+                                onCreateFolder={handleCreateFolder}
                         />
 
                         {status && (

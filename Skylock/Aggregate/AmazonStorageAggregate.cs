@@ -27,7 +27,7 @@ namespace Skylock.Aggregate
             throw new NotImplementedException();
         }
 
-        public override string SaveFile(IFormFile file, string targetFileName, User user)
+        public override string SaveFile(IFormFile file, string targetFileName, User user, string? FIlePath)
         {
             throw new NotImplementedException();
         }

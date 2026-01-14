@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Skylock.Aggregate;
@@ -95,7 +95,7 @@ namespace Skylock.ApplicationServices
             };
         }
 
-        public async Task<IActionResult> GetFiles()
+        public async Task<IActionResult> GetFiles(string? path)
         {
             var userLoginDto = ClaimsPrincipalExtensions.ToUserLoginDto(_httpContextAccessor.HttpContext.User);
             var user = await _manageUserUoW.CheckIfUserExist(userLoginDto);
@@ -104,13 +104,14 @@ namespace Skylock.ApplicationServices
                 return new NotFoundObjectResult("User not exist");
             }
 
-            var fileList = _manageFileUoW.GetFiles(user);
+            var fileList = _manageFileUoW.GetFiles(user, path);
 
             return new OkObjectResult(fileList);
         }
 
-        public async Task<IActionResult> UploadFile(IFormFile file)
+        public async Task<IActionResult> UploadFile(IFormFile file, string? FilePath)
         {
+            FilePath = FilePath.Replace("/", "\\");
             if (file == null || file.Length == 0)
                 return new BadRequestObjectResult("File is empty.");
 
@@ -121,9 +122,9 @@ namespace Skylock.ApplicationServices
             var storageAggregate = StorageAggregateFactory.CreateStorageAggregate(StorageAggregateType, _configuration);
 
             var fileName = Guid.NewGuid().ToString();
-            var storagePath = storageAggregate.SaveFile(file, fileName, user);
+            var storagePath = storageAggregate.SaveFile(file, fileName, user, FilePath);
 
-            var addedFile = await _manageFileUoW.AddFileToDB(userLoginDto.KeycloakId, file.FileName, fileName, StorageAggregateType);
+            var addedFile = await _manageFileUoW.AddFileToDB(userLoginDto.KeycloakId, file.FileName, fileName, StorageAggregateType, storagePath);
 
             return new OkObjectResult(new { Message = $"File uploaded successfully - {addedFile.Id}" });
         }

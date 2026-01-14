@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Skylock.Database.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace Skylock.Aggregate.Base
 {
     public abstract class StorageAggregate : IAggregate
     {
-        public abstract string SaveFile(IFormFile file, string targetFileName, User user);
+        public abstract string SaveFile(IFormFile file, string targetFileName, User user, string? FIlePath);
         public abstract Stream DownloadFile(FileDTO fileInfo, User user);
         public abstract bool DeleteFile(FileDTO fileInfo, User user);
     }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Skylock.Database.Models;
 
 namespace Skylock.Automapper
@@ -16,7 +16,8 @@ namespace Skylock.Automapper
                 .ForMember(dest => dest.FileId, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.OriginalFileName, opt => opt.MapFrom(src => src.OriginalFileName))
                 .ForMember(dest => dest.StorageType, opt => opt.MapFrom(src => src.StorageType))
-                .ForMember(dest => dest.UploadedAt, opt => opt.MapFrom(src => src.UploadedAt));
+                .ForMember(dest => dest.UploadedAt, opt => opt.MapFrom(src => src.UploadedAt))
+                .ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => src.FilePath));
         }
     }
 }
